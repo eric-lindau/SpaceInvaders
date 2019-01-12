@@ -5,6 +5,8 @@
 As in the original Space Invaders game, players can move the cannon and shoot at aliens (using buttons on the FPGA board). The player must
 shoot all aliens before they reach the bottom to win the game, at which point the game will stop and can be reset. The aliens will move sideways and downwards on a set clock until they reach the bottom, at which point the player loses the game, and a game over screen is shown. The player's score is shown in the top right, which increases every time an alien is killed.
 
+Included in this repository is a video called demo_video which shows gameplay for the game.
+
 ## Technical
 This project was built using Quartus Lite 17.0 and uploaded onto a Cyclone V FPGA board. The game outputs to a VGA, and takes input directly from the board.
 
