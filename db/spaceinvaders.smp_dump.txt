@@ -1,0 +1,28 @@
+
+State Machine - |spaceinvaders|render:renderAll|choose
+Name choose.00 choose.10 choose.01 
+choose.00 0 0 0 
+choose.01 1 0 1 
+choose.10 1 1 0 
+
+State Machine - |spaceinvaders|render:renderAll|game_over:gameover|over_control:overControl1|current_state
+Name current_state.SHIFT 
+current_state.LOAD 0 
+current_state.SHIFT 1 
+
+State Machine - |spaceinvaders|render:renderAll|score:drawScore|render_score:rendScore|score_control:scoreControl1|current_state
+Name current_state.SHIFT 
+current_state.LOAD 0 
+current_state.SHIFT 1 
+
+State Machine - |spaceinvaders|render:renderAll|render_sprites:renderSprites|sprite_control:spriteControl1|current_state
+Name current_state.SHIFT 
+current_state.LOAD 0 
+current_state.SHIFT 1 
+
+State Machine - |spaceinvaders|aliens:als|alien_control:control|current_state
+Name current_state.RIGHT current_state.DOWN_2 current_state.DOWN current_state.LEFT 
+current_state.LEFT 0 0 0 0 
+current_state.DOWN 0 0 1 1 
+current_state.DOWN_2 0 1 0 1 
+current_state.RIGHT 1 0 0 1 

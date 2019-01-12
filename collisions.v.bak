@@ -1,0 +1,89 @@
+module shot_handler(
+  input clock,
+  input reset,
+  input [7:0] startX,
+  input [7:0] startY,
+  input fire,
+  output reg [7:0] shotX,
+  output reg [7:0] shotY
+);
+  always@(posedge clock, posedge fire)
+  begin: shot_processing
+    if (clock) begin
+      if (!reset) begin
+        shotX <= startX;
+        shotY <= startY;
+      end
+      else begin
+        if (shotY < startY) begin
+          shotY <= shotY - 1;
+        end
+        if (shotY <= 1) begin
+          shotY <= startY;
+        end
+      end
+    end
+    if (fire) begin
+      shotX <= startX;
+      shotY <= startY - 1;
+    end
+  end
+endmodule
+
+module collision(
+	input clock,
+	input reset,
+  input [7:0] alienX,
+  input [7:0] alienY,
+  input [7:0] shotX,
+  input [7:0] shotY,
+	output reg [0:14] alive,
+  output reg reset_shot
+);
+  localparam A_WIDTH = 8'd13,
+             A_HEIGHT = 8'd8,
+             A_X_DIST = 8'd5,
+             A_Y_DIST = 8'd2,
+             A_NUM_PER_ROW = 8'd5,
+             A_NUM_ROWS = 8'd3;
+  
+  reg [7:0] indexX;
+  reg [7:0] indexY;
+  reg [7:0] index;
+  always@(posedge clock)
+  begin: collision_detect
+    if (!reset) begin
+      indexX <= 0;
+      indexY <= 0;
+      index <= 0;
+      alive <= 15'b111111111111111;
+      reset_shot <= 0;
+    end
+    else begin
+      if (alienX + indexX <= shotX && shotX <= alienX + indexX + A_WIDTH && alienY + indexY <= shotY && shotY <= alienY + indexY + A_HEIGHT) begin
+        alive[index] <= 0;
+        reset_shot <= 1;
+      end
+      else begin
+        reset_shot <= 0;
+      end
+
+      if ((index + 1) % A_NUM_PER_ROW == 0) begin
+        indexY <= indexY + A_HEIGHT + A_Y_DIST - 1;
+        indexX <= 0;
+      end
+      else begin
+        indexX <= indexX + A_WIDTH + A_X_DIST - 1;
+      end
+
+      if (index + 1 == A_NUM_PER_ROW * A_NUM_ROWS) begin
+        indexX <= 0;
+        indexY <= 0;
+        index <= 0;
+      end
+      else begin
+        index <= index + 1;
+      end
+    end
+  end
+endmodule

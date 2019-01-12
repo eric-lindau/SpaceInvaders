@@ -1,0 +1,65 @@
+module render(
+	input clock,	//put clock 50 into this
+	input draw,		//put rate divider into this
+	input reset,	//put reset into this
+	input[7:0] cannonX,
+	input[7:0] cannonY,
+	input[7:0] alienX,
+	input[7:0] alienY,
+	input[14:0] alive,	//does nothing right now
+	output reg[7:0] x,	//send to VGA x
+	output reg[7:0] y,	//send to VGA y
+	output reg plot,
+	output reg[2:0] colourOut);			//send to VGA writeEn
+	
+	wire ld, alien, cannon, stop, done, plot1, plot2;
+	wire [2:0]cOut1,  cOut2;
+	wire [7:0]xOut1, yOut1, xOut2, yOut2;
+	
+	//erase erasePart(clock, draw, reset, cannonX, cannonY, alienX, alienY, xOut1, yOut1, cOut1, plot1, done);
+	
+	eraseScreen eraseAll(clock, draw, reset, xOut1, yOut1, cOut1, plot1, done);
+	
+	render_sprites renderSprites(clock, done, reset, cannonX, cannonY, alienX, alienY, alive, xOut2, yOut2, cOut2, plot2);
+	
+	reg choose;
+	
+	always@(posedge clock) begin
+		if(!reset) begin
+			choose = 1'b0;
+		end
+		else if(draw) begin
+			choose = 1'b1;
+		end
+		else if(done) begin
+			choose = 1'b0;
+		end
+	end
+	
+	always@(posedge clock) begin
+		if(choose == 1'b1) begin
+			x <= xOut1;
+			y <= yOut1;
+			plot <= plot1;
+		end
+		
+		if(choose == 1'b0) begin
+			x <= xOut2;
+			y <= yOut2;
+			plot <= plot2;
+		end
+	end
+	
+	always@(posedge clock) begin
+		if(!reset) begin
+			colourOut <= 3'd0;
+		end
+		else if(~choose) begin
+			colourOut <= cOut2;
+		end
+		else if (choose) begin
+			colourOut <= cOut1;
+		end
+	end
+endmodule
+
